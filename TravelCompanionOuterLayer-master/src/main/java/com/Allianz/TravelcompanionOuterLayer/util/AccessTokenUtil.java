@@ -93,4 +93,10 @@ public class AccessTokenUtil {
 		
 			return acToken;
 	}
+
+	public void setTokenProviderUrl(String tokenProviderUrl) {
+		this.tokenProviderUrl = tokenProviderUrl;
+	}
+	
+	
 }

@@ -43,7 +43,7 @@ import io.swagger.annotations.ApiOperation;
 public class TravelCompanionOuterLayerController {
 
 	@Autowired
-	TravelCompanionService productService;
+	private TravelCompanionService productService;
 
 	private static final Logger logger = Logger.getLogger(TravelCompanionOuterLayerController.class.getName());
 

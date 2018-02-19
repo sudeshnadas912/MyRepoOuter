@@ -65,12 +65,10 @@ public class TravelCompanionService {
 	private Environment env;
 
 	@Autowired
-	ProductInfoVO productInfoVO;
+	private ProductInfoVO productInfoVO;
 
 	@Autowired
-	PackageinfoVO packageinfoVO;
-	@Autowired
-	AccessTokenUtil accessTokenUtil;
+	private AccessTokenUtil accessTokenUtil;
 
 	@Autowired
 	private RestTemplate restTemplate;
