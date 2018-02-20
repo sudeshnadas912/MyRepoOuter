@@ -16,6 +16,7 @@
 package com.Allianz.TravelcompanionOuterLayer.Model;
 
 import java.util.List;
+import static java.util.stream.Collectors.toList;
 
 import org.springframework.stereotype.Component;
 
@@ -32,10 +33,12 @@ public class ProductInfoVO {
 		this.productName = productName;
 	}
 	public List<PackageinfoVO> getPackageList() {
-		return packageList;
+		return packageList.stream().collect(toList());
+		
 	}
 	public void setPackageList(List<PackageinfoVO> packageList) {
-		this.packageList = packageList;
+		
+		this.packageList = packageList.stream().collect(toList());
 	}
 	
 	public ProductInfoVO()

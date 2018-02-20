@@ -237,4 +237,9 @@ public class TravelCompanionService {
 
 	}
 
+	// Code changes only for testing purpose
+	public void setEnv(Environment env) {
+		this.env = env;
+	}
+
 }

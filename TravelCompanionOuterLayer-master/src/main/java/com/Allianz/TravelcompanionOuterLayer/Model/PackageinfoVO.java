@@ -15,6 +15,7 @@
  ******************************************************************************/
 package com.Allianz.TravelcompanionOuterLayer.Model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -34,11 +35,11 @@ public class PackageinfoVO {
 	}
 
 	public List<String> getPackageDescription() {
-		return packageDescription;
+		return new ArrayList<>(packageDescription);
 	}
 
 	public void setPackageDescription(List<String> packageDescription) {
-		this.packageDescription = packageDescription;
+		this.packageDescription = new ArrayList<>(packageDescription);
 	}
 
 	public PackageinfoVO() {
@@ -47,7 +48,7 @@ public class PackageinfoVO {
 
 	public PackageinfoVO(String packageName, List<String> packageDescription) {
 		this.packageName = packageName;
-		this.packageDescription = packageDescription;
+		this.packageDescription = new ArrayList<>(packageDescription);
 
 	}
 

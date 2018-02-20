@@ -4,32 +4,85 @@ all right reserved.
 package com.Allianz.TravelcompanionOuterLayer.service;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.springframework.core.env.Environment;
+import org.springframework.mock.env.MockEnvironment;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.Allianz.TravelcompanionOuterLayer.Model.AccessToken;
 import com.Allianz.TravelcompanionOuterLayer.Model.PackageinfoVO;
 import com.Allianz.TravelcompanionOuterLayer.Model.ProductInfoVO;
 import com.Allianz.TravelcompanionOuterLayer.Model.User;
+import com.Allianz.TravelcompanionOuterLayer.util.MakeServiceCalls;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+@RunWith(SpringRunner.class)
 public class TravelCompanionServiceTest {
 
+	private User user = new User();
 	@Mock
-	ProductInfoVO productInfoVO = new ProductInfoVO();
+	private ProductInfoVO productInfoVO = new ProductInfoVO();
+
+	@InjectMocks
+	private TravelCompanionService travelCompanionService;
+
+	@Mock
+	private Environment env;
+
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+
+	@Mock
+	private MakeServiceCalls makeServiceCalls;
 
 	@Before
 	public void setUp() throws Exception {
+
 	}
 
 	@After
 	public void tearDown() throws Exception {
+	}
+
+	private User fetchUser() {
+
+		List<String> moduleList = new ArrayList<>();
+		moduleList.add("adds transfer cost for special luggage");
+		moduleList.add("adds vehicle return home coverage");
+		moduleList.add("adds alternative travel cost reimbursement");
+		moduleList.add("adds rental car");
+
+		user.setFiledDate("12-12-2018");
+		user.setPackageTitle("packageTitle");
+		user.setPlace("place");
+		user.setTravelDate("23-12-2018");
+		user.setTravelEndDate("31-12-2018");
+		user.setUserId(1004);
+		user.setUserName("testNme");
+		user.setWeather("good");
+		user.setDistance(10);
+		user.setDuration(5);
+		user.setNumberOfPerson(2);
+		user.setPressure(1046);
+		user.setSelectedModule(moduleList);
+		user.setSelectedPackage("package");
+		return user;
 	}
 
 	/**
@@ -55,34 +108,23 @@ public class TravelCompanionServiceTest {
 
 		productInfoVO.setPackageList(packageinfoVOs);
 		productInfoVO.setProductName("SkiinSelekor");
+		
+		
+		//Testing
+		ProductInfoVO productInfoVOTest = new ProductInfoVO();
+		productInfoVOTest.setPackageList(packageinfoVOs);
+		productInfoVOTest.setProductName("SkiinSelekor");
+		
 
-		List<String> moduleList = new ArrayList<>();
-		moduleList.add("mod1");
-		moduleList.add("mod2");
-
-		User user = new User();
-		user.setFiledDate("12-12-2018");
-		user.setPackageTitle("packageTitle");
-		user.setPlace("place");
-		user.setTravelDate("23-12-2018");
-		user.setTravelEndDate("31-12-2018");
-		user.setUserId(1004);
-		user.setUserName("testNme");
-		user.setWeather("good");
-		user.setDistance(10);
-		user.setDuration(5);
-		user.setNumberOfPerson(2);
-		user.setPressure(4);
-		user.setSelectedModule(moduleList);
-		user.setSelectedPackage("package");
 		// Check all getter field only for testing
 		assertNotNull(packageinfoVO.getPackageDescription() + packageinfoVO.getPackageName());
-
+		User testUser = fetchUser();
 		// Check all fields of user only for testing
-		assertNotNull(user.getDistance() + user.getDuration() + user.getFiledDate() + user.getNumberOfPerson()
-				+ user.getPackageTitle() + user.getPlace() + user.getPressure() + user.getSelectedPackage()
-				+ user.getTravelDate() + user.getTravelEndDate() + user.getUserId() + user.getUserName()
-				+ user.getWeather() + user.getSelectedModule());
+		assertNotNull(testUser.getDistance() + testUser.getDuration() + testUser.getFiledDate()
+				+ testUser.getNumberOfPerson() + testUser.getPackageTitle() + testUser.getPlace()
+				+ testUser.getPressure() + testUser.getSelectedPackage() + testUser.getTravelDate()
+				+ testUser.getTravelEndDate() + testUser.getUserId() + testUser.getUserName() + testUser.getWeather()
+				+ testUser.getSelectedModule());
 		// Check all fields of product only for testing
 		assertNotNull(productInfoVO.getPackageList() + productInfoVO.getProductName());
 	}
@@ -97,7 +139,71 @@ public class TravelCompanionServiceTest {
 		// Get the value for testing purpose
 		assertNotNull(accessToken.getAccessToken() + accessToken.getExpiresSeconds() + accessToken.getTokenType());
 	}
+
+	@Test
+	public void testGetProductInfoNegative() throws Exception {
+		MockEnvironment env = new MockEnvironment();
+		env.setProperty("mock", "false");
+		travelCompanionService.setEnv(env);
+		thrown.expect(NullPointerException.class);
+		travelCompanionService.getProductInfo("passion");
+		throw new NullPointerException();
+	}
 	
-	
+	@Test
+	public void testGetProductInfoPositive() throws Exception {
+		MockEnvironment env = new MockEnvironment();
+		env.setProperty("mock", "true");
+		travelCompanionService.setEnv(env);
+		ProductInfoVO productInfoVOtest = travelCompanionService.getProductInfo("passion");
+		assertNotNull(productInfoVOtest);
+	}
+
+	@Test
+	public void testFileMobilityInsurance() throws Exception {
+		MockEnvironment env = new MockEnvironment();
+		env.setProperty("mock", "false");
+		travelCompanionService.setEnv(env);
+		User testUser = fetchUser();
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("key1", "value1");
+		jsonObject.put("key2", "value2");
+		thrown.expect(NullPointerException.class);
+		travelCompanionService.fileMobilityInsurance(testUser);
+		throw new NullPointerException();
+	}
+
+	@Test
+	public void testGetTheQuote() throws Exception {
+		MockEnvironment env = new MockEnvironment();
+		env.setProperty("mock", "false");
+		travelCompanionService.setEnv(env);
+		User testUser = fetchUser();
+		String response = travelCompanionService.getTheQuote(testUser);
+		assertNull(response);
+	}
+
+	@Test
+	public void testGetTheQuoteNotMock() throws Exception {
+		MockEnvironment env = new MockEnvironment();
+		env.setProperty("mock", "true");
+
+		User testUser = fetchUser();
+		// Radar live mock test
+		env.setProperty("component.specialLuggage", "adds transfer cost for special luggage");
+		env.setProperty("component.returnTransfer", "adds vehicle return home coverage");
+		env.setProperty("component.alternateTransfer", "adds alternative travel cost reimbursement");
+		env.setProperty("component.rentalCar", "adds rental car");
+		env.setProperty("component.returnTransferFactor", "0.02");
+		env.setProperty("component.alternateTransferFactor", "0.05");
+		env.setProperty("component.rentCarFactor", "0.03");
+		env.setProperty("component.durationFactor", "1.05");
+		env.setProperty("component.lowPressureFactor", "1.2");
+		env.setProperty("component.highPressureFactor", "0.8");
+		env.setProperty("component.numberOfPeopleFactor", "0.9");
+		travelCompanionService.setEnv(env);
+		String response = travelCompanionService.getTheQuote(testUser);
+		assertNotNull(response);
+	}
 
 }
